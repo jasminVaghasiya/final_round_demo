@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Building2, Users, Shield, Copy, LogOut, CheckCircle2, Ticket, Settings, Bell } from 'lucide-react';
+import { Building2, Users, Shield, Copy, LogOut, CheckCircle2, UserCheck, Settings } from 'lucide-react';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -21,8 +21,10 @@ export const Dashboard = () => {
     navigate('/login');
   };
 
+  const isAdminOrHod = ['SUPER_ADMIN', 'ADMIN', 'HOD'].includes(user?.role);
+
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ paddingLeft: '68px' }}>
       {/* Top Navbar */}
       <header style={{ backgroundColor: 'var(--bg-card)', borderBottom: '1px solid var(--border-color)', padding: '1rem 2rem' }}>
         <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -47,6 +49,12 @@ export const Dashboard = () => {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            {isAdminOrHod && (
+              <Link to="/admin/users" className="btn btn-secondary" style={{ padding: '0.4rem 0.875rem', fontSize: '0.85rem' }}>
+                <Users size={16} /> User Management
+              </Link>
+            )}
+
             {/* Company Code Badge with Copy button */}
             {company?.code && (
               <button
@@ -112,19 +120,37 @@ export const Dashboard = () => {
             </p>
           </div>
 
-          {user?.role === 'ADMIN' && (
-            <Link to="/admin/join-requests" className="btn btn-primary">
-              <Users size={18} /> Manage Join Requests
-            </Link>
-          )}
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            {isAdminOrHod && (
+              <Link to="/admin/users" className="btn btn-primary">
+                <Users size={18} /> User Management Module
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Dashboard Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {/* Card 1: Company Profile & Code */}
+          {/* Card 1: User Management Quick Access */}
+          {isAdminOrHod && (
+            <div className="card" style={{ maxWidth: 'none', padding: '1.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                <Users size={22} color="var(--primary)" />
+                <h3 style={{ fontSize: '1.1rem' }}>User Management</h3>
+              </div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
+                Manage team accounts, assign departments, set roles, activate/suspend accounts, and reset passwords.
+              </p>
+              <Link to="/admin/users" className="btn btn-primary btn-full">
+                Open User Directory
+              </Link>
+            </div>
+          )}
+
+          {/* Card 2: Organization Profile & Code */}
           <div className="card" style={{ maxWidth: 'none', padding: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <Building2 size={22} color="var(--primary)" />
+              <Building2 size={22} color="var(--success)" />
               <h3 style={{ fontSize: '1.1rem' }}>Organization Details</h3>
             </div>
 
@@ -146,41 +172,18 @@ export const Dashboard = () => {
             </div>
           </div>
 
-          {/* Card 2: User Role & Permissions */}
-          <div className="card" style={{ maxWidth: 'none', padding: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-              <Shield size={22} color="var(--success)" />
-              <h3 style={{ fontSize: '1.1rem' }}>Access & Governance</h3>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Assigned Role:</span>
-                <span className="badge badge-admin">{user?.role}</span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Account Email:</span>
-                <strong style={{ color: 'var(--text-primary)' }}>{user?.email}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Data Scope:</span>
-                <strong style={{ color: 'var(--success)' }}>Isolated Tenant ({company?.code})</strong>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Quick Action Navigation */}
+          {/* Card 3: Admin Onboarding Controls */}
           {user?.role === 'ADMIN' && (
             <div className="card" style={{ maxWidth: 'none', padding: '1.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                <Users size={22} color="var(--warning)" />
-                <h3 style={{ fontSize: '1.1rem' }}>Admin Onboarding Controls</h3>
+                <UserCheck size={22} color="var(--warning)" />
+                <h3 style={{ fontSize: '1.1rem' }}>Join Requests</h3>
               </div>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '1.25rem' }}>
-                Review employee access requests, assign roles, and approve new team members.
+                Review incoming employee join requests and approve account access.
               </p>
               <Link to="/admin/join-requests" className="btn btn-secondary btn-full">
-                Review Pending Requests
+                Review Join Requests
               </Link>
             </div>
           )}
