@@ -72,7 +72,7 @@ export default function App() {
               <Route
                 path="/admin/join-requests"
                 element={
-                  <ProtectedRoute>
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN']}>
                     <AdminJoinRequests />
                   </ProtectedRoute>
                 }
@@ -81,7 +81,7 @@ export default function App() {
               <Route
                 path="/admin/users"
                 element={
-                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'HOD', 'EMPLOYEE', 'FACULTY', 'STAFF', 'STUDENT']}>
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'HOD', 'MANAGER']}>
                     <UserManagement />
                   </ProtectedRoute>
                 }
@@ -89,7 +89,7 @@ export default function App() {
               <Route
                 path="/admin/users/:id"
                 element={
-                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'HOD', 'EMPLOYEE', 'FACULTY', 'STAFF', 'STUDENT']}>
+                  <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN', 'HOD', 'MANAGER']}>
                     <UserProfileView />
                   </ProtectedRoute>
                 }

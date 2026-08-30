@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useAbility } from '../../casl/AbilityContext';
 import {
   LayoutDashboard,
   Users,
@@ -9,20 +8,25 @@ import {
   Settings,
   LogOut,
   Building2,
-  ChevronRight,
-  Shield,
 } from 'lucide-react';
 
 export const Sidebar = () => {
   const { user, company, logout } = useAuth();
-  const ability = useAbility();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
 
-  // CASL Driven Navigation Rules
-  const canReadUsers = ability.can('read', 'User');
-  const canReadJoinRequests = ability.can('read', 'JoinRequest');
-  const canManageDepts = ability.can('manage', 'Department');
+  // Check HR department membership
+  const deptObj = user?.departmentId;
+  const deptCode = deptObj && typeof deptObj === 'object' && deptObj.code ? String(deptObj.code).toUpperCase() : '';
+  const deptName = deptObj && typeof deptObj === 'object' && deptObj.name ? String(deptObj.name).toLowerCase() : '';
+  const isHrPersonnel = (deptCode === 'HR' || deptName.includes('human resource')) && user?.role !== 'EMPLOYEE';
+
+  // Role Visibility Rules:
+  // 1. User Directory: Strictly hidden from EMPLOYEE (visible to SUPER_ADMIN, ADMIN, HOD, MANAGER)
+  const canReadUsers = ['SUPER_ADMIN', 'ADMIN', 'HOD', 'MANAGER'].includes(user?.role);
+
+  // 2. Join Requests: Strictly hidden from EMPLOYEE (visible ONLY to SUPER_ADMIN, ADMIN, or non-employee HR staff)
+  const canReadJoinRequests = user?.role !== 'EMPLOYEE' && (['SUPER_ADMIN', 'ADMIN'].includes(user?.role) || isHrPersonnel);
 
   const handleLogout = () => {
     logout();
