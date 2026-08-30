@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { useAbility } from '../../casl/AbilityContext';
 import { complaintApi } from '../../api/complaintApi';
 import { ComplaintNotificationModal } from '../complaints/ComplaintNotificationModal';
 import {
@@ -11,17 +10,13 @@ import {
   Settings,
   LogOut,
   Building2,
-  ChevronRight,
-  Shield,
   LifeBuoy,
-  MessageSquareWarning,
   Inbox,
   Bell,
 } from 'lucide-react';
 
 export const Sidebar = () => {
   const { user, company, logout } = useAuth();
-  const ability = useAbility();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
   const [arrivedPendingCount, setArrivedPendingCount] = useState(0);
@@ -49,17 +44,25 @@ export const Sidebar = () => {
     };
   }, [user]);
 
-  // CASL Driven Navigation Rules
-  const canReadUsers = ability.can('read', 'User');
-  const canReadJoinRequests = ability.can('read', 'JoinRequest');
-  const canManageDepts = ability.can('manage', 'Department');
+  // Check HR department membership
+  const deptObj = user?.departmentId;
+  const deptCode = deptObj && typeof deptObj === 'object' && deptObj.code ? String(deptObj.code).toUpperCase() : '';
+  const deptName = deptObj && typeof deptObj === 'object' && deptObj.name ? String(deptObj.name).toLowerCase() : '';
+  const isHrPersonnel = (deptCode === 'HR' || deptName.includes('human resource')) && user?.role !== 'EMPLOYEE';
+
+  // Role Visibility Rules:
+  // 1. User Directory: Strictly hidden from EMPLOYEE (visible to SUPER_ADMIN, ADMIN, HOD, MANAGER)
+  const canReadUsers = ['SUPER_ADMIN', 'ADMIN', 'HOD', 'MANAGER'].includes(user?.role);
+
+  // 2. Join Requests: Strictly hidden from EMPLOYEE (visible ONLY to SUPER_ADMIN, ADMIN, or non-employee HR staff)
+  const canReadJoinRequests = user?.role !== 'EMPLOYEE' && (['SUPER_ADMIN', 'ADMIN'].includes(user?.role) || isHrPersonnel);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
 
-    const isAuthority = ['HOD', 'ADMIN', 'SUPER_ADMIN', 'CREATOR', 'SYSTEM_SUPER_ADMIN'].includes(user?.role);
+    const isAuthority = ['MANAGER', 'HOD', 'ADMIN', 'SUPER_ADMIN', 'CREATOR', 'SYSTEM_SUPER_ADMIN'].includes(user?.role);
 
     const navItems = [
     {
