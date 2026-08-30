@@ -9,8 +9,14 @@ const departmentSchema = new mongoose.Schema(
     },
     code: {
       type: String,
-      trim: true,
+      required: [true, 'Department code is required'],
       uppercase: true,
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: '',
     },
     companyId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,10 +24,10 @@ const departmentSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    description: {
-      type: String,
-      trim: true,
-      default: '',
+    hodUserId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
     },
   },
   {
@@ -30,7 +36,6 @@ const departmentSchema = new mongoose.Schema(
 );
 
 departmentSchema.index({ companyId: 1, name: 1 }, { unique: true });
+departmentSchema.index({ companyId: 1, code: 1 }, { unique: true });
 
-const Department = mongoose.model('Department', departmentSchema);
-
-module.exports = Department;
+module.exports = mongoose.model('Department', departmentSchema);

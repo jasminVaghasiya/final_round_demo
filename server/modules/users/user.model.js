@@ -3,32 +3,136 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema(
   {
+    userId: {
+      type: String,
+      unique: true,
+      trim: true,
+      index: true,
+    },
+    firstName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      default: '',
+    },
     name: {
       type: String,
-      required: [true, 'Name is required'],
+      required: [true, 'Full name is required'],
       trim: true,
     },
     email: {
       type: String,
-      required: [true, 'Email is required'],
+      required: [true, 'Email address is required'],
       unique: true,
       lowercase: true,
       trim: true,
+      index: true,
+    },
+    username: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      sparse: true,
     },
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minlength: 6,
-      select: false, // Exclude password field by default on queries
+      minlength: [6, 'Password must be at least 6 characters long'],
+      select: false,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    alternatePhone: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    gender: {
+      type: String,
+      enum: ['Male', 'Female', 'Other', 'Prefer not to say', ''],
+      default: '',
+    },
+    dob: {
+      type: Date,
+      default: null,
+    },
+    profileImage: {
+      type: String,
+      default: '',
     },
     role: {
       type: String,
-      enum: ['admin', 'agent', 'customer'],
-      default: 'customer',
+      enum: ['SUPER_ADMIN', 'ADMIN', 'HOD', 'FACULTY', 'STAFF', 'STUDENT', 'EMPLOYEE', 'MANAGER'],
+      default: 'EMPLOYEE',
+      index: true,
     },
-    isActive: {
+    companyId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Company',
+      default: null,
+      index: true,
+    },
+    departmentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Department',
+      default: null,
+      index: true,
+    },
+    designation: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    employeeStudentId: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    status: {
+      type: String,
+      enum: ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING', 'REJECTED'],
+      default: 'ACTIVE',
+      index: true,
+    },
+    suspendedAt: {
+      type: Date,
+      default: null,
+    },
+    suspensionReason: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    suspensionEndDate: {
+      type: Date,
+      default: null,
+    },
+    lastLoginAt: {
+      type: Date,
+      default: null,
+    },
+    passwordChangedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    forcePasswordChange: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    twoFactorEnabled: {
+      type: Boolean,
+      default: false,
+    },
+    failedLoginAttempts: {
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -36,22 +140,29 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// Pre-save hook to hash password using bcrypt if modified
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    return next();
+  if (this.firstName || this.lastName) {
+    this.name = `${this.firstName || ''} ${this.lastName || ''}`.trim() || this.name;
   }
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+
+  if (!this.userId) {
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    this.userId = `USR-${randomNum}`;
+  }
+
+  if (this.isModified('password')) {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    this.passwordChangedAt = new Date();
+  }
+
   next();
 });
 
-// Instance method to verify entered password against hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-// Transform output JSON to remove sensitive fields
 userSchema.methods.toJSON = function () {
   const userObject = this.toObject();
   delete userObject.password;

@@ -1,6 +1,6 @@
 const { verifyToken } = require('../utils/jwt');
 const { ApiError } = require('../middlewares/error.middleware');
-const User = require('../models/User');
+const User = require('../modules/users/user.model');
 
 /**
  * Authentication Middleware
