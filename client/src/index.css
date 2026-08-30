@@ -454,3 +454,13 @@ h3 { font-size: 1.25rem; line-height: 1.75rem; }
   background-color: var(--bg-card-hover);
 }
 
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+

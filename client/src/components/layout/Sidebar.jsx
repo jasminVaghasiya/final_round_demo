@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useAbility } from '../../casl/AbilityContext';
+import { complaintApi } from '../../api/complaintApi';
+import { ComplaintNotificationModal } from '../complaints/ComplaintNotificationModal';
 import {
   LayoutDashboard,
   Users,
@@ -11,6 +13,10 @@ import {
   Building2,
   ChevronRight,
   Shield,
+  LifeBuoy,
+  MessageSquareWarning,
+  Inbox,
+  Bell,
 } from 'lucide-react';
 
 export const Sidebar = () => {
@@ -18,6 +24,30 @@ export const Sidebar = () => {
   const ability = useAbility();
   const navigate = useNavigate();
   const [isHovered, setIsHovered] = useState(false);
+  const [arrivedPendingCount, setArrivedPendingCount] = useState(0);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  // Poll for new incoming complaints every 10 seconds
+  useEffect(() => {
+    let isMounted = true;
+    const fetchIncomingCount = async () => {
+      try {
+        const res = await complaintApi.getComplaints({ viewScope: 'arrived', status: 'OPEN' });
+        if (isMounted && res.data) {
+          setArrivedPendingCount(res.data.length);
+        }
+      } catch (err) {
+        // Silently ignore background polling errors
+      }
+    };
+
+    fetchIncomingCount();
+    const interval = setInterval(fetchIncomingCount, 10000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, [user]);
 
   // CASL Driven Navigation Rules
   const canReadUsers = ability.can('read', 'User');
@@ -29,12 +59,27 @@ export const Sidebar = () => {
     navigate('/login');
   };
 
-  const navItems = [
+    const isAuthority = ['HOD', 'ADMIN', 'SUPER_ADMIN', 'CREATOR', 'SYSTEM_SUPER_ADMIN'].includes(user?.role);
+
+    const navItems = [
     {
       label: 'Dashboard',
       path: '/dashboard',
       icon: LayoutDashboard,
       show: true,
+    },
+    {
+      label: 'My Complaints',
+      path: '/my-complaints',
+      icon: LifeBuoy,
+      show: true,
+    },
+    {
+      label: 'Arrived Complaints',
+      path: '/arrived-complaints',
+      icon: Inbox,
+      show: isAuthority,
+      badge: arrivedPendingCount > 0 ? arrivedPendingCount : null,
     },
     {
       label: 'User Directory',
@@ -130,11 +175,47 @@ export const Sidebar = () => {
                     fontWeight: isActive ? 600 : 500,
                     fontSize: '0.9rem',
                     transition: 'all 0.15s ease',
+                    position: 'relative',
                   })}
                   title={!isHovered ? item.label : ''}
                 >
                   <IconComponent size={20} style={{ flexShrink: 0 }} />
-                  {isHovered && <span style={{ transition: 'opacity 0.2s ease' }}>{item.label}</span>}
+                  {isHovered ? (
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, overflow: 'hidden' }}>
+                      <span style={{ transition: 'opacity 0.2s ease', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.label}</span>
+                      {item.badge && (
+                        <span
+                          style={{
+                            backgroundColor: '#ef4444',
+                            color: '#ffffff',
+                            borderRadius: '9999px',
+                            padding: '0.1rem 0.5rem',
+                            fontSize: '0.7rem',
+                            fontWeight: 800,
+                            marginLeft: '0.5rem',
+                            boxShadow: '0 0 8px rgba(239, 68, 68, 0.6)',
+                          }}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    item.badge && (
+                      <span
+                        style={{
+                          position: 'absolute',
+                          top: '6px',
+                          right: '8px',
+                          width: '8px',
+                          height: '8px',
+                          borderRadius: '50%',
+                          backgroundColor: '#ef4444',
+                          boxShadow: '0 0 6px rgba(239, 68, 68, 0.8)',
+                        }}
+                      />
+                    )
+                  )}
                 </NavLink>
               );
             })}
@@ -142,7 +223,67 @@ export const Sidebar = () => {
       </div>
 
       {/* Bottom Profile & Logout Section */}
-      <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+      <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
+        {/* Notifications Trigger Button (Only for Authorities) */}
+        {isAuthority && (
+          <button
+            onClick={() => setIsNotificationOpen(true)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.875rem',
+              padding: '0.625rem 0.75rem',
+              borderRadius: 'var(--radius-md)',
+              color: arrivedPendingCount > 0 ? '#ef4444' : 'var(--text-secondary)',
+              backgroundColor: arrivedPendingCount > 0 ? 'rgba(239, 68, 68, 0.1)' : 'transparent',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '0.875rem',
+              fontWeight: 600,
+              width: '100%',
+              textAlign: 'left',
+              position: 'relative',
+            }}
+            title={!isHovered ? `Notifications (${arrivedPendingCount})` : ''}
+          >
+            <Bell size={20} style={{ flexShrink: 0 }} />
+            {isHovered ? (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flex: 1, overflow: 'hidden' }}>
+                <span>Notifications</span>
+                {arrivedPendingCount > 0 && (
+                  <span
+                    style={{
+                      backgroundColor: '#ef4444',
+                      color: '#ffffff',
+                      borderRadius: '9999px',
+                      padding: '0.1rem 0.45rem',
+                      fontSize: '0.7rem',
+                      fontWeight: 800,
+                    }}
+                  >
+                    {arrivedPendingCount}
+                  </span>
+                )}
+              </div>
+            ) : (
+              arrivedPendingCount > 0 && (
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '4px',
+                    right: '6px',
+                    width: '8px',
+                    height: '8px',
+                    borderRadius: '50%',
+                    backgroundColor: '#ef4444',
+                    boxShadow: '0 0 6px rgba(239, 68, 68, 0.8)',
+                  }}
+                />
+              )
+            )}
+          </button>
+        )}
+
         {/* User Info */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', paddingLeft: '0.375rem' }}>
           <div
@@ -197,6 +338,21 @@ export const Sidebar = () => {
           {isHovered && <span>Logout</span>}
         </button>
       </div>
+
+      {/* Complaint Notification Modal */}
+      <ComplaintNotificationModal
+        isOpen={isNotificationOpen}
+        onClose={() => setIsNotificationOpen(false)}
+        onSelectComplaint={(complaintId) => {
+          navigate(`/arrived-complaints`);
+        }}
+        onActionCompleted={() => {
+          // Re-poll count
+          complaintApi.getComplaints({ viewScope: 'arrived', status: 'OPEN' }).then((res) => {
+            if (res.data) setArrivedPendingCount(res.data.length);
+          });
+        }}
+      />
     </aside>
   );
 };

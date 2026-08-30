@@ -15,6 +15,7 @@ const joinRequestRoutes = require('./modules/join-requests/joinRequest.routes');
 const userRoutes = require('./modules/users/user.routes');
 const departmentRoutes = require('./modules/departments/department.routes');
 const roleRoutes = require('./modules/roles/role.routes');
+const complaintRoutes = require('./modules/complaints/complaint.routes');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/join-requests', joinRequestRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/departments', departmentRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/complaints', complaintRoutes);
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {

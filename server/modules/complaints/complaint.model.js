@@ -1,5 +1,61 @@
 const mongoose = require('mongoose');
 
+const messageSchema = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
+    editedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    editedAt: {
+      type: Date,
+      default: null,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  { _id: true }
+);
+
+const statusHistorySchema = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      required: true,
+    },
+    changedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+    },
+    changedAt: {
+      type: Date,
+      default: Date.now,
+    },
+    notes: {
+      type: String,
+      default: '',
+    },
+  },
+  { _id: false }
+);
+
 const complaintSchema = new mongoose.Schema(
   {
     complaintId: {
@@ -27,6 +83,17 @@ const complaintSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    targetedRole: {
+      type: String,
+      enum: ['HOD', 'MANAGER', 'ADMIN', 'STAFF', 'OTHER'],
+      default: 'HOD',
+    },
+    targetedPerson: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      default: null,
+      index: true,
+    },
     assignedTo: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -46,7 +113,7 @@ const complaintSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['TECHNICAL', 'ACADEMIC', 'ADMINISTRATIVE', 'INFRASTRUCTURE', 'OTHER'],
+      enum: ['TECHNICAL', 'ACADEMIC', 'ADMINISTRATIVE', 'INFRASTRUCTURE', 'HR', 'FACILITY', 'OTHER'],
       default: 'TECHNICAL',
     },
     priority: {
@@ -56,7 +123,7 @@ const complaintSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'],
+      enum: ['DRAFT', 'OPEN', 'IN_PROGRESS', 'RESOLVED', 'CLOSED', 'REJECTED'],
       default: 'OPEN',
       index: true,
     },
@@ -68,12 +135,14 @@ const complaintSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    statusHistory: [statusHistorySchema],
+    messages: [messageSchema],
   },
   {
     timestamps: true,
   }
 );
 
-complaintSchema.index({ companyId: 1, submittedBy: 1, createdAt: -1 });
+complaintSchema.index({ companyId: 1, submittedBy: 1, status: 1, createdAt: -1 });
 
 module.exports = mongoose.model('Complaint', complaintSchema);

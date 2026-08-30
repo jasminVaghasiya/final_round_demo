@@ -26,15 +26,8 @@ const loadDepartment = async (req) => {
   return Department.findOne({ _id: req.params.id, companyId: req.user.companyId });
 };
 
-router.get(
-  '/',
-  policyGate(departmentPolicy, 'canViewDepartment', null, {
-    action: ACTIONS.READ,
-    subjectName: SUBJECTS.DEPARTMENT,
-    requireTarget: false,
-  }),
-  getDepartments
-);
+// List departments: Allowed for all authenticated company members
+router.get('/', getDepartments);
 
 router.post(
   '/',

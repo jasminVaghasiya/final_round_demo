@@ -8,7 +8,24 @@ const { ApiError } = require('../../middlewares/error.middleware');
  */
 const getDepartments = async (req, res, next) => {
   try {
-    const departments = await Department.find({ companyId: req.user.companyId }).sort({ name: 1 });
+    let departments = await Department.find({ companyId: req.user.companyId }).sort({ name: 1 });
+
+    // If company has no departments created yet, automatically seed standard departments
+    if (departments.length === 0 && req.user.companyId) {
+      const defaultDepts = [
+        { name: 'Information Technology', code: 'IT', description: 'Technical, IT infrastructure & software support', companyId: req.user.companyId },
+        { name: 'Human Resources', code: 'HR', description: 'HR queries, payroll & staff management', companyId: req.user.companyId },
+        { name: 'Administration', code: 'ADMIN', description: 'General administration & operations', companyId: req.user.companyId },
+        { name: 'Academic & Curriculum', code: 'ACAD', description: 'Academic courses & curriculum queries', companyId: req.user.companyId },
+        { name: 'Facility & Maintenance', code: 'MAINT', description: 'Equipment & physical facility maintenance', companyId: req.user.companyId },
+      ];
+      try {
+        await Department.insertMany(defaultDepts, { ordered: false });
+        departments = await Department.find({ companyId: req.user.companyId }).sort({ name: 1 });
+      } catch (insertErr) {
+        console.log('[Department] Default insert notice:', insertErr.message);
+      }
+    }
 
     const departmentsWithCounts = await Promise.all(
       departments.map(async (dept) => {

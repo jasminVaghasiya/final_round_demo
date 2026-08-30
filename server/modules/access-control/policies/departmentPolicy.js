@@ -11,6 +11,7 @@ class DepartmentPolicy extends Policy {
    */
   canViewDepartment(user, department) {
     if (user?.role === ROLE.SUPER_ADMIN || user?.role === ROLE.ADMIN) return this.allow();
+    if (!department) return this.allow();
     if (this.extractId(user?.companyId) === this.extractId(department?.companyId)) return this.allow();
     return this.deny('Not authorized to view this department');
   }

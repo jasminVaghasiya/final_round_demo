@@ -43,11 +43,13 @@ const defineAbilitiesFor = (user = {}) => {
       break;
 
     case ROLE.HOD:
-      // HOD manages users & complaints within their assigned department
+    case 'MANAGER':
+      // HOD and Managers manage users & complaints
       can([ACTIONS.READ], SUBJECTS.COMPANY, { companyId });
-      can([ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.ASSIGN_DEPARTMENT], SUBJECTS.USER, { companyId, departmentId });
+      can([ACTIONS.READ], SUBJECTS.DEPARTMENT, { companyId });
+      can([ACTIONS.READ, ACTIONS.UPDATE, ACTIONS.ASSIGN_DEPARTMENT], SUBJECTS.USER, { companyId });
       can([ACTIONS.READ, ACTIONS.APPROVE, ACTIONS.REJECT], SUBJECTS.JOIN_REQUEST, { companyId });
-      can([ACTIONS.READ, ACTIONS.UPDATE], SUBJECTS.COMPLAINT, { companyId, departmentId });
+      can([ACTIONS.READ, ACTIONS.UPDATE], SUBJECTS.COMPLAINT, { companyId });
       // Cannot promote self or create Super Admin
       cannot([ACTIONS.CHANGE_ROLE], SUBJECTS.USER, { role: ROLE.SUPER_ADMIN });
       break;
@@ -57,8 +59,9 @@ const defineAbilitiesFor = (user = {}) => {
     case ROLE.FACULTY:
     case ROLE.STAFF:
     case ROLE.STUDENT:
-      // Regular members can view public/company info, submit complaints, and view self profile
+      // Regular members can view public/company info, read departments, submit complaints, and view self profile
       can([ACTIONS.READ], SUBJECTS.COMPANY, { companyId });
+      can([ACTIONS.READ], SUBJECTS.DEPARTMENT, { companyId });
       can([ACTIONS.READ, ACTIONS.UPDATE], SUBJECTS.USER, { _id: userId });
       can([ACTIONS.CREATE, ACTIONS.READ], SUBJECTS.COMPLAINT, { submittedBy: userId });
       break;

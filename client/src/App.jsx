@@ -16,6 +16,7 @@ import { Dashboard } from './pages/Dashboard';
 import { UserManagement } from './pages/UserManagement';
 import { UserProfileView } from './pages/UserProfileView';
 import { Settings } from './pages/Settings';
+import { MyComplaints } from './pages/MyComplaints';
 
 // Layout wrapper for authenticated pages featuring the Collapsible Hover Sidebar
 const AuthenticatedLayout = () => {
@@ -68,6 +69,8 @@ export default function App() {
               }
             >
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/my-complaints" element={<MyComplaints initialScope="my" />} />
+              <Route path="/arrived-complaints" element={<MyComplaints initialScope="arrived" />} />
 
               <Route
                 path="/admin/join-requests"
