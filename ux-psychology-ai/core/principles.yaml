@@ -1,0 +1,404 @@
+﻿# CORE PRINCIPLES — Compact AI Runtime Index
+# Full research: /layers/
+# Load this file; load layer files only for deep reference.
+
+principles:
+
+  # ── PERCEPTION ──────────────────────────────────────────────────────────────
+  - id: proximity
+    layer: 01
+    evidence: A
+    domain: [perception, layout]
+    rule: elements_near_each_other_are_grouped
+    apply_when: [grouping, layout, form_design, card_design]
+    avoid: [equal_spacing_across_all_elements]
+    ref: layers/01-human-perception/proximity.md
+
+  - id: similarity
+    layer: 01
+    evidence: A
+    domain: [perception, visual_design]
+    rule: same_appearance_implies_same_type
+    apply_when: [component_system, navigation, lists, tables]
+    avoid: [styling_different_functions_identically, styling_same_functions_differently]
+    ref: layers/01-human-perception/similarity.md
+
+  - id: common_region
+    layer: 01
+    evidence: B
+    domain: [perception, layout]
+    rule: shared_container_implies_group_membership
+    apply_when: [cards, panels, form_sections, modals]
+    ref: layers/01-human-perception/common-region.md
+
+  - id: figure_ground
+    layer: 01
+    evidence: A
+    domain: [perception, visual_design]
+    rule: one_element_must_be_figure_everything_else_is_ground
+    apply_when: [modals, tooltips, overlays, primary_action_design]
+    avoid: [ambiguous_layering, equal_contrast_for_foreground_and_background]
+    ref: layers/01-human-perception/figure-ground.md
+
+  - id: closure_continuity
+    layer: 01
+    evidence: B
+    domain: [perception, layout]
+    rules:
+      - incomplete_shapes_completed_by_perception
+      - aligned_elements_imply_continuation
+    apply_when: [infinite_scroll, carousel_design, progress_indicators]
+    ref: layers/01-human-perception/closure-continuity.md
+
+  - id: visual_hierarchy
+    layer: 01
+    evidence: B
+    domain: [perception, visual_design]
+    rule: one_dominant_element_per_view_then_decreasing_weight
+    apply_when: [every_screen]
+    levels: [primary, secondary, tertiary, metadata]
+    avoid: [equal_visual_weight_for_all_elements]
+    ref: layers/01-human-perception/visual-hierarchy.md
+
+  - id: contrast_salience
+    layer: 01
+    evidence: A
+    domain: [perception, visual_design]
+    rule: salience_must_map_to_information_priority
+    apply_when: [cta_design, error_states, status_indicators, navigation]
+    avoid: [high_salience_decorative_elements, equal_salience_competing_actions]
+    ref: layers/01-human-perception/contrast-salience.md
+
+  - id: common_fate
+    layer: 01
+    evidence: B
+    domain: [perception, motion]
+    rule: elements_moving_together_are_perceived_as_grouped
+    apply_when: [group_animations, filter_updates, list_reorder, drag_drop]
+    avoid: [coincidental_simultaneous_animation_of_unrelated_elements]
+    ref: layers/01-human-perception/common-fate.md
+
+  - id: pragnanz
+    layer: 01
+    evidence: B
+    domain: [perception, visual_design]
+    rule: prefer_simplest_visual_interpretation
+    apply_when: [icon_design, layout_composition, information_density_review]
+    ref: layers/01-human-perception/pragnanz.md
+
+  - id: connectedness
+    layer: 01
+    evidence: B
+    domain: [perception, layout]
+    rule: visual_connections_imply_relationships_stronger_than_proximity
+    apply_when: [charts_lines, wizards, breadcrumbs, relationship_diagrams, tooltips]
+    avoid: [unintentional_visual_connections_between_unrelated_elements]
+    ref: layers/01-human-perception/connectedness.md
+
+  # ── COGNITION ────────────────────────────────────────────────────────────────
+  - id: cognitive_load
+    layer: 02
+    evidence: A
+    domain: [cognition, ux]
+    types: [intrinsic, extraneous, germane]
+    rule: minimize_extraneous_load_preserve_germane_load
+    apply_when: [every_screen, complex_tasks, forms, dashboards, onboarding]
+    levers: [chunking, progressive_disclosure, recognition_over_recall, clear_hierarchy]
+    ref: layers/02-cognitive-psychology/cognitive-load.md
+
+  - id: working_memory
+    layer: 02
+    evidence: A
+    domain: [cognition]
+    capacity: "3-4 chunks (Cowan 2001) — NOT Miller's 7±2"
+    rule: never_require_user_to_hold_more_than_3-4_items_in_mind_simultaneously
+    apply_when: [multi_step_tasks, complex_forms, navigation_depth]
+    ref: layers/02-cognitive-psychology/working-memory-chunking.md
+
+  - id: chunking
+    layer: 02
+    evidence: A
+    domain: [cognition, layout]
+    rule: group_related_items_to_reduce_effective_item_count
+    apply_when: [forms, navigation, data_display, settings, option_lists]
+    ref: layers/02-cognitive-psychology/working-memory-chunking.md
+
+  - id: recognition_recall
+    layer: 02
+    evidence: A
+    domain: [cognition, interaction]
+    rule: show_options_rather_than_requiring_user_to_produce_them_from_memory
+    apply_when: [search, navigation, forms, commands, settings]
+    patterns: [autocomplete, recent_items, visible_options, persistent_labels]
+    ref: layers/02-cognitive-psychology/recognition-vs-recall.md
+
+  - id: progressive_disclosure
+    layer: 02
+    evidence: B
+    domain: [cognition, ia]
+    rule: reveal_complexity_in_order_of_task_necessity
+    apply_when: [complex_forms, settings, dashboards, onboarding, feature_rich_tools]
+    ref: layers/02-cognitive-psychology/progressive-disclosure.md
+
+  - id: mental_models
+    layer: 02
+    evidence: A
+    domain: [cognition, ux]
+    rule: interface_must_match_user_mental_model_not_system_model
+    apply_when: [navigation_ia, terminology, metaphor_selection, interaction_design]
+    ref: layers/02-cognitive-psychology/mental-models.md
+
+  # ── DECISION ─────────────────────────────────────────────────────────────────
+  - id: hick_hyman
+    layer: 03
+    evidence: A
+    domain: [decision, interaction]
+    rule: reduce_effective_choice_count_per_decision_point
+    note: "log relationship to decision time — organize > eliminate"
+    apply_when: [navigation, menus, option_lists, pricing_pages]
+    ref: layers/03-decision-psychology/hick-hyman-law.md
+
+  - id: choice_overload
+    layer: 03
+    evidence: B
+    domain: [decision]
+    rule: organize_and_filter_large_option_sets_do_not_simply_remove_options
+    conditions: [unfamiliar_options, no_dominant_choice, high_stakes]
+    apply_when: [product_catalogs, plan_selection, settings, filter_design]
+    ref: layers/03-decision-psychology/choice-overload.md
+
+  - id: default_effect
+    layer: 03
+    evidence: A
+    domain: [decision, ethics]
+    rule: defaults_must_serve_user_majority_not_product_interests
+    apply_when: [settings, form_defaults, subscription_tiers, privacy_controls]
+    avoid: [opt_out_defaults_for_user_disadvantaging_options]
+    ref: layers/03-decision-psychology/defaults-anchoring.md
+
+  - id: anchoring
+    layer: 03
+    evidence: A
+    domain: [decision]
+    rule: first_presented_value_anchors_subsequent_judgment
+    apply_when: [pricing_pages, donation_forms, progress_indicators, comparison_tables]
+    ref: layers/03-decision-psychology/defaults-anchoring.md
+
+  - id: serial_position
+    layer: 03
+    evidence: A
+    domain: [decision, layout]
+    rule: first_and_last_positions_are_remembered_best
+    apply_when: [navigation_ordering, tab_bars, cta_placement, onboarding_steps]
+    ref: layers/03-decision-psychology/serial-position-von-restorff.md
+
+  - id: von_restorff
+    layer: 03
+    evidence: A
+    domain: [decision, visual_design]
+    rule: one_visually_distinct_item_is_noticed_and_remembered_best
+    apply_when: [primary_cta, recommended_plan, featured_item, notification_badge]
+    avoid: [multiple_equally_distinctive_elements_competing]
+    ref: layers/03-decision-psychology/serial-position-von-restorff.md
+
+  - id: framing
+    layer: 03
+    evidence: A
+    domain: [decision, copywriting]
+    rule: gain_framing_increases_action_loss_framing_increases_caution
+    apply_when: [cta_copy, error_messages, cancellation_flows, destructive_action_confirmation]
+    ref: layers/03-decision-psychology/framing-loss-aversion.md
+
+  - id: loss_aversion
+    layer: 03
+    evidence: A
+    domain: [decision]
+    rule: losses_feel_2x_stronger_than_equivalent_gains
+    apply_when: [cart_abandonment, cancellation_flows, irreversible_action_warnings, expiry_messaging]
+    avoid: [exploiting_with_artificial_urgency_or_false_scarcity]
+    ref: layers/03-decision-psychology/framing-loss-aversion.md
+
+  - id: goal_gradient
+    layer: 03
+    evidence: B
+    domain: [decision, motivation]
+    rule: show_explicit_proximity_to_goal_to_accelerate_completion
+    apply_when: [progress_indicators, onboarding, loyalty_programs, multi_step_tasks]
+    ref: layers/03-decision-psychology/goal-gradient-endowed-progress.md
+
+  - id: endowed_progress
+    layer: 03
+    evidence: B
+    domain: [decision, motivation]
+    rule: credit_system_provided_steps_immediately_to_activate_completion_motivation
+    apply_when: [onboarding, profile_completion, task_checklists]
+    ref: layers/03-decision-psychology/goal-gradient-endowed-progress.md
+
+  # ── ATTENTION ────────────────────────────────────────────────────────────────
+  - id: selective_attention
+    layer: 04
+    evidence: A
+    domain: [attention]
+    rule: users_do_not_see_everything_design_for_the_attentional_path
+    apply_when: [every_screen]
+    ref: layers/04-attention/selective-attention.md
+
+  - id: visual_salience
+    layer: 04
+    evidence: B
+    domain: [attention, visual_design]
+    rule: high_salience_must_equal_high_information_priority
+    features: [color, size, motion, luminance, orientation]
+    apply_when: [primary_actions, errors, alerts, status_indicators]
+    ref: layers/04-attention/visual-salience-capture.md
+
+  - id: change_blindness
+    layer: 04
+    evidence: A
+    domain: [attention]
+    rule: state_changes_in_unattended_areas_will_be_missed
+    remedy: [localized_feedback, motion_to_signal_change, focus_management, aria_live]
+    apply_when: [live_data, form_validation, status_updates, async_operations]
+    ref: layers/04-attention/change-blindness.md
+
+  - id: information_scent
+    layer: 04
+    evidence: B
+    domain: [attention, navigation]
+    rule: navigation_labels_must_predict_their_destination
+    apply_when: [navigation_design, link_labels, breadcrumbs, search_results]
+    avoid: [jargon, generic_labels, icon_only_navigation]
+    ref: layers/04-attention/information-scent.md
+
+  - id: visual_scanning
+    layer: 04
+    evidence: C
+    domain: [attention, layout]
+    patterns: [f_pattern, z_pattern, layer_cake]
+    rule: place_most_important_content_where_users_scan_first
+    apply_when: [landing_pages, content_pages, marketing, headers]
+    note: descriptive_not_prescriptive
+    ref: layers/04-attention/visual-scanning.md
+
+  # ── INTERACTION ──────────────────────────────────────────────────────────────
+  - id: fitts
+    layer: 05
+    evidence: A
+    domain: [interaction, motor]
+    formula: "MT = a + b × log2(1 + D/W)"
+    rules:
+      - increase_size_of_frequent_high_consequence_targets
+      - reduce_distance_to_frequent_controls
+      - screen_edges_are_infinite_width_targets
+    touch_minimums:
+      wcag_minimum: 24x24px
+      wcag_enhanced: 44x44px
+      material: 48x48dp
+      apple_hig: 44x44pt
+    apply_when: [button_sizing, touch_targets, control_placement]
+    ref: layers/05-interaction-usability/fitts-law.md
+
+  - id: affordances
+    layer: 05
+    evidence: B
+    domain: [interaction, visual_design]
+    rule: every_interactive_element_must_signal_its_interactivity_and_operation
+    apply_when: [button_design, input_design, link_design, custom_controls]
+    avoid: [removing_signifiers_for_aesthetic_reasons, non_interactive_elements_with_interactive_signals]
+    ref: layers/05-interaction-usability/affordances-signifiers.md
+
+  - id: feedback_timing
+    layer: 05
+    evidence: B
+    domain: [interaction]
+    thresholds:
+      instantaneous: "<100ms"
+      perceived_immediate: "100-300ms"
+      slight_delay: "300ms-1s"
+      loading_required: ">1s"
+      progress_required: ">3s"
+    apply_when: [every_interactive_element, async_operations, form_submission]
+    ref: layers/05-interaction-usability/feedback-constraints.md
+
+  - id: constraints
+    layer: 05
+    evidence: C
+    domain: [interaction]
+    types: [physical, semantic, cultural, logical]
+    rule: restrict_input_to_valid_range_to_prevent_error_class
+    apply_when: [forms, date_pickers, quantity_inputs, dependent_fields]
+    ref: layers/05-interaction-usability/feedback-constraints.md
+
+  - id: error_prevention
+    layer: 05
+    evidence: C
+    domain: [interaction, forms]
+    rules:
+      - validate_on_blur_not_on_keystroke
+      - show_requirements_before_error_occurs
+      - disable_impossible_actions
+      - confirm_irreversible_actions
+    ref: layers/05-interaction-usability/error-prevention-recovery.md
+
+  - id: error_recovery
+    layer: 05
+    evidence: C
+    domain: [interaction, forms]
+    rules:
+      - error_messages_identify_problem_and_corrective_action
+      - error_messages_adjacent_to_error_source
+      - preserve_user_input_on_error
+      - support_undo_for_reversible_actions
+    ref: layers/05-interaction-usability/error-prevention-recovery.md
+
+  - id: interaction_states
+    layer: 05
+    evidence: C
+    domain: [interaction, visual_design]
+    required_states: [default, hover, focus, active, disabled, loading, success, error]
+    conditional_states: [selected, empty, skeleton]
+    rule: every_interactive_element_needs_all_applicable_states_designed
+    critical: focus_state_must_never_be_suppressed
+    ref: layers/05-interaction-usability/interaction-states.md
+
+  # ── HEURISTICS ────────────────────────────────────────────────────────────────
+  - id: nielsen_10
+    layer: 06
+    evidence: C
+    domain: [ux]
+    heuristics:
+      H1: visibility_of_system_status
+      H2: match_system_and_real_world
+      H3: user_control_and_freedom
+      H4: consistency_and_standards
+      H5: error_prevention
+      H6: recognition_not_recall
+      H7: flexibility_and_efficiency
+      H8: aesthetic_and_minimalist
+      H9: help_recognize_diagnose_recover_errors
+      H10: help_and_documentation
+    ref: layers/06-ux-heuristics/nielsen-10-heuristics.md
+
+  - id: aesthetic_usability
+    layer: 06
+    evidence: B
+    domain: [visual_design, ux]
+    rule: aesthetic_design_increases_perceived_usability_not_actual_usability
+    note: optimize_both_independently
+    ref: layers/06-ux-heuristics/additional-principles.md
+
+  - id: peak_end
+    layer: 06
+    evidence: B
+    domain: [ux, experience_design]
+    rule: overall_experience_judged_by_peak_moment_and_ending_not_average
+    apply_when: [onboarding, checkout, error_recovery, session_end]
+    ref: layers/06-ux-heuristics/additional-principles.md
+
+  - id: law_least_effort
+    layer: 06
+    evidence: B
+    domain: [ux]
+    rule: the_optimal_path_must_be_the_easiest_path
+    apply_when: [every_task_flow]
+    ref: layers/06-ux-heuristics/additional-principles.md

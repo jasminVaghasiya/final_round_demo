@@ -1,0 +1,121 @@
+﻿# MOTION KNOWLEDGE — Compact AI Runtime
+# Full reference: /layers/08-motion-animation/
+
+# Taxonomy — every animation must answer at least one
+purposes:
+  feedback:    what_happened_when_i_acted
+  state_change: what_is_transitioning
+  navigation:  where_did_i_come_from_where_am_i_going
+  attention:   what_should_i_look_at_now
+  spatial:     where_did_this_come_from_where_did_it_go
+  decorative:  no_functional_purpose  # AVOID in most contexts
+
+# Duration guide
+durations:
+  micro_feedback:   "80-150ms"     # button press, hover
+  state_change:     "150-250ms"    # toggle, field validation, badge
+  navigation_short: "200-300ms"    # tab switch, panel open
+  navigation_long:  "250-350ms"    # page transition, drawer
+  attention:        "300-600ms"    # badge pulse, alert
+  loading:          continuous
+  max_interactive:  "500ms"        # above this = perceived delay
+
+# Easing by direction
+easing:
+  enter:    "cubic-bezier(0, 0, 0.2, 1)"     # ease-out — decelerates to rest
+  exit:     "cubic-bezier(0.4, 0, 1, 1)"     # ease-in — accelerates to departure
+  reorder:  "cubic-bezier(0.4, 0, 0.2, 1)"   # ease-in-out — within screen
+  standard: "cubic-bezier(0.2, 0, 0, 1)"     # most state changes
+
+# Decision matrix by component
+components:
+  button:
+    press:      "scale 97% 80ms ease"
+    release:    "scale 100% 120ms ease-out"
+    loading:    "replace content with spinner"
+    success:    "scale 104% then 100% 200ms + color"
+    error:      "shake 300ms horizontal"
+
+  input:
+    focus:      "border color 150ms ease-out"
+    error:      "border color + shake 300ms"
+    success:    "border color 150ms"
+
+  modal:
+    open:       "opacity 0→1 + scale 0.95→1 250ms ease-out from center or trigger"
+    close:      "opacity 1→0 + scale 1→0.95 200ms ease-in"
+
+  drawer:
+    open:       "translateX from edge 300ms ease-out"
+    close:      "translateX to edge 250ms ease-in"
+
+  dropdown:
+    open:       "height + opacity expand from anchor 200ms ease-out"
+    close:      "height + opacity collapse 150ms ease-in"
+
+  toast:
+    enter:      "opacity + translateY 200ms ease-out"
+    exit:       "opacity 150ms ease-in"
+
+  list_item:
+    enter:      "opacity + translateY stagger 20-40ms 200ms ease-out"
+    reorder:    "translateY smooth 250ms ease-in-out"
+    exit:       "opacity + height 200ms ease-in"
+
+  tab:
+    switch:     "content fade 150ms"
+    indicator:  "translate 200ms ease-in-out"
+
+# Product style modifiers
+product_styles:
+  utility_software:
+    pacing: fast
+    preferred: [state_transition, feedback, navigation]
+    avoid: [signature, decorative]
+
+  consumer_product:
+    pacing: moderate
+    preferred: [feedback, state_change, spatial]
+
+  luxury:
+    pacing: slow
+    preferred: [reveal, scale, restrained_signature]
+    avoid: [spring, bounce, energetic]
+
+  gaming:
+    pacing: fast
+    preferred: [spring, scale, directional, energetic]
+
+  financial:
+    pacing: moderate
+    preferred: [state_transition, precision]
+    avoid: [playful, spring, bounce]
+
+# Spatial navigation rules
+spatial_rules:
+  forward:        slide_in_from_right
+  back:           slide_in_from_left
+  drill_down:     slide_right_push_left
+  modal:          scale_from_center_or_trigger
+  sheet:          slide_from_bottom
+  consistency:    direction_must_be_predictable_throughout_session
+
+# Reduced motion
+reduced_motion:
+  css_query: "(prefers-reduced-motion: reduce)"
+  strategy: replace_not_remove
+  substitutions:
+    slide:        "opacity only"
+    scale_bounce: "instant or opacity"
+    shake_error:  "color + border + text (no movement)"
+    parallax:     "static"
+  rule: state_change_information_must_survive_motion_removal
+  wcag:
+    2.3.1: "no more than 3 flashes per second — Level A"
+    2.3.3: "motion from interactions can be disabled — Level AAA, treat as best practice"
+
+# Stagger rules for lists
+stagger:
+  within_group:   "20-40ms between items"
+  max_items:      6  # beyond this, stagger feels like slow loading
+  direction:      top_to_bottom_or_source_direction

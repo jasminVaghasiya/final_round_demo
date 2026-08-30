@@ -1,0 +1,117 @@
+﻿# PSYCHOLOGY KNOWLEDGE — Compact AI Runtime
+# Full reference: /layers/01–04/
+
+# Load this file for tasks involving perception, cognition, decision, attention.
+
+perception:
+  grouping:
+    strongest_to_weakest: [connectedness, common_region, proximity, similarity, common_fate, continuity]
+    apply: group_by_meaning_not_aesthetics
+
+  salience:
+    pre_attentive_features: [color, size, motion, luminance, orientation, shape]
+    rule: highest_salience_must_map_to_highest_information_priority
+    anti_pattern: decorative_elements_with_high_salience
+
+  figure_ground:
+    rule: interfaces_must_have_unambiguous_figure_ground_relationship
+    mechanisms: [contrast, elevation, blur, overlay]
+
+  hierarchy:
+    visual_weight_order: [size, contrast, weight, color, position, whitespace]
+    rule: one_dominant_element_per_view
+
+cognition:
+  working_memory:
+    capacity: "3-4 chunks (Cowan 2001)"
+    implication: never_require_more_than_4_items_held_simultaneously
+    NOT: "Miller's 7±2 is not a UI design rule"
+
+  cognitive_load:
+    types:
+      intrinsic:   complexity_of_the_task_itself  # unavoidable
+      extraneous:  added_by_poor_design            # must_minimize
+      germane:     building_mental_models           # support_this
+    reducers: [visual_hierarchy, chunking, recognition_over_recall, progressive_disclosure, consistent_patterns]
+
+  chunking:
+    definition: grouping_related_items_to_reduce_effective_count
+    apply: [navigation_menus, form_sections, data_tables, settings_pages, long_lists]
+    max_per_group: 5-7
+
+  recognition_vs_recall:
+    rule: show_options_rather_than_require_typed_recall
+    patterns: [autocomplete, suggestions, recent_items, visible_labels, saved_values]
+    anti_pattern: label_disappears_on_focus
+
+  progressive_disclosure:
+    rule: show_only_what_is_needed_for_the_current_step
+    show: primary_task_relevant_information
+    hide: secondary_advanced_rare  # reveal on request
+    pattern: [accordion, tabs, step_wizard, see_more, tooltip_on_hover]
+
+  mental_models:
+    rule: interface_must_match_user_conceptual_model_not_technical_model
+    apply: [terminology, metaphors, navigation_ia, interaction_conventions]
+    test: if_user_is_surprised_the_model_is_wrong
+
+decision:
+  defaults:
+    power: very_high  # majority of users never change defaults
+    rule: set_defaults_for_majority_use_not_product_benefit
+
+  anchoring:
+    rule: first_number_anchors_all_subsequent_judgment
+    apply: [pricing, donation_amounts, progress_start_values]
+
+  serial_position:
+    rule: first_and_last_items_remembered_best
+    apply: [navigation_order, cta_position, tab_order, onboarding_sequence]
+
+  von_restorff:
+    rule: one_distinctive_item_captures_attention_and_memory
+    apply: [primary_button, recommended_plan, notification_badge]
+    limit: one_distinctive_element_per_context
+
+  loss_aversion:
+    magnitude: "losses feel ~2× stronger than equivalent gains"
+    ethical_uses: [warning_about_irreversible_actions, communicating_expiry, cancellation_consequences]
+    unethical_uses: [false_scarcity, artificial_urgency, manipulative_cancellation_flows]
+
+  choice_overload:
+    conditions: [unfamiliar_options, no_dominant_choice, high_stakes, no_filtering]
+    remedy: [categorize, highlight_recommended, enable_filtering, progressive_disclosure]
+    NOT: removing_features_users_need
+
+  goal_gradient:
+    rule: showing_progress_toward_goal_accelerates_completion
+    require: visible_progress_indicator
+
+  endowed_progress:
+    rule: credit_system_provided_steps_to_start_progress_above_zero
+    ethical_constraint: credited_steps_must_represent_real_value
+
+attention:
+  selective:
+    rule: users_do_not_see_everything_design_for_the_scan_path
+    implication: critical_content_must_be_in_the_attentional_path
+
+  change_blindness:
+    rule: changes_in_unattended_areas_will_be_missed
+    remedies:
+      - motion_at_change_location
+      - localized_feedback_near_user_focus
+      - focus_management_to_new_content
+      - aria_live_for_screen_readers
+
+  information_scent:
+    rule: labels_must_predict_destinations
+    strong_scent: [specific_user_facing_terms, descriptive_labels]
+    weak_scent: [jargon, generic_labels, icon_only_navigation]
+
+  scanning:
+    f_pattern: dense_text_pages  # horizontal top + left edge vertical
+    z_pattern: sparse_pages      # horizontal top + diagonal + horizontal bottom
+    layer_cake: strong_headings_page  # scan headings then dive
+    implication: place_primary_content_in_scanned_zones
+    note: descriptive_not_prescriptive_patterns

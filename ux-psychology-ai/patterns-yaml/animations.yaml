@@ -1,0 +1,126 @@
+﻿# ANIMATION PATTERNS — Compact Decision Matrix
+# Full reference: /layers/08-motion-animation/
+
+# HOW TO USE:
+# 1. Identify the element type
+# 2. Identify the trigger/event
+# 3. Apply the animation spec
+# 4. Verify it answers a motion taxonomy question
+# 5. Define reduced-motion alternative
+
+page_transitions:
+  forward_navigation:
+    enter:  "translateX(100% → 0) 300ms ease-out"
+    exit:   "translateX(0 → -30%) 300ms ease-in"
+    reduced: "opacity 0→1 200ms"
+
+  back_navigation:
+    enter:  "translateX(-100% → 0) 300ms ease-out"
+    exit:   "translateX(0 → 30%) 300ms ease-in"
+    reduced: "opacity 0→1 200ms"
+
+list_animations:
+  staggered_enter:
+    each_item: "translateY(16px → 0) + opacity(0 → 1)"
+    delay_between: "30ms"
+    duration: "200ms ease-out"
+    reduced: "opacity only, no stagger"
+
+  item_remove:
+    animate: "height + opacity 200ms ease-in"
+    reflow:  "remaining items translateY simultaneously"
+    reduced: "instant remove"
+
+  item_reorder:
+    animate: "translateY 250ms ease-in-out"
+    reduced: "instant reposition"
+
+data_updates:
+  number_change:
+    animate: "brief highlight background-color fade 400ms"
+    direction: up_value=green, down_value=red  # non_color_also_required
+    reduced: "instant update"
+
+  row_highlight:
+    animate: "background-color fade in 300ms, hold 1s, fade out 500ms"
+    reduced: "static highlight that fades"
+
+  chart_update:
+    animate: "transition data points 400ms ease-in-out"
+    reduced: "instant update"
+
+micro_interactions:
+  button_press:
+    down: "scale(0.97) 80ms"
+    up:   "scale(1) 120ms ease-out"
+    reduced: "opacity brief change"
+
+  toggle_switch:
+    animate: "thumb translateX + background-color 150ms ease-in-out"
+    reduced: "instant state change + color"
+
+  checkbox:
+    check:   "checkmark draws or fill appears 100ms"
+    reduced: "instant fill"
+
+  error_shake:
+    animate: "translateX(-4px → 4px → -4px → 0) 300ms"
+    iterations: 3
+    reduced: "no movement — color + border + text only"
+
+  hover_lift:
+    animate: "translateY(-2px) + box-shadow 150ms ease-out"
+    return:  "150ms ease-in"
+    reduced: "background-color only"
+
+  success_pulse:
+    animate: "scale(1 → 1.04 → 1) 200ms + color 150ms"
+    reduced: "color only"
+
+scroll_effects:
+  fade_in_on_scroll:
+    animate: "opacity(0 → 1) + translateY(20px → 0) 300ms ease-out"
+    trigger: "when element enters viewport"
+    reduced: "no animation — elements visible immediately"
+    note: "do not animate content that is already in viewport on load"
+
+  parallax:
+    reduced: "static — disable entirely"
+    use_sparingly: true
+
+attention_signals:
+  notification_badge:
+    animate: "scale(0 → 1) 200ms spring or ease-out"
+    pulse:   "scale 1→1.2→1 600ms ease-in-out when new"
+    reduced: "instant appear"
+
+  alert_enter:
+    animate: "opacity + height expand 250ms ease-out"
+    reduced: "opacity only"
+
+loading_patterns:
+  spinner:
+    animate: "rotate 360deg 1s linear infinite"
+    reduced: "pulsing opacity instead of rotation — or static indicator"
+
+  progress_bar:
+    animate: "width transition 200ms ease-out on each increment"
+    reduced: "jump to each value"
+
+  skeleton:
+    animate: "shimmer gradient 1.5s ease-in-out infinite"
+    reduced: "static gray fill"
+
+product_style_overrides:
+  luxury:
+    all_durations: "× 1.5"
+    easing: "prefer cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+    avoid: [spring, bounce, scale_above_104]
+
+  utility_software:
+    all_durations: "× 0.75"
+    prefer: [opacity, minimal_translate]
+
+  consumer_mobile:
+    all_durations: "× 1.0"
+    prefer: [spring_for_interactive, smooth_for_navigation]

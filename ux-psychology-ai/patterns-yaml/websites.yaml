@@ -1,0 +1,75 @@
+﻿# WEBSITE PATTERNS — Compact AI Runtime
+# Common page patterns with principle + component mappings
+
+landing_page:
+  primary_goal:   convert_or_engage
+  principles:     [visual_hierarchy, serial_position, von_restorff, loss_aversion, framing, visual_scanning]
+  structure:
+    hero:
+      contains: [headline_h1, subheadline, primary_cta, supporting_visual]
+      hierarchy: headline_dominant
+      cta:       one_primary_high_contrast
+      a11y:      [descriptive_h1, alt_text_on_visual, cta_accessible_name]
+    features:
+      pattern:   z_pattern_or_alternating
+      each_item: [icon_or_image, heading_h2_or_h3, description, optional_link]
+    social_proof: [testimonials, logos, metrics]
+    final_cta:    above_footer  # serial position — last
+  motion:
+    hero:         "subtle entrance — opacity 300ms"
+    scroll:       "fade_in_on_scroll for sections"
+    cta_hover:    "hover_lift 150ms"
+    reduced:      "all static"
+
+pricing_page:
+  principles:     [anchoring, von_restorff, serial_position, choice_overload, default_effect, loss_aversion]
+  structure:
+    plans:        3_is_optimal_for_most_contexts
+    recommended:  visually_distinct  # von_restorff
+    order:        low_to_high_or_high_to_low  # anchoring decision
+    default:      recommended_plan_pre_selected  # default_effect
+    feature_list: comparison_of_meaningful_differentiators
+    cta:          per_plan_accessible_name_includes_plan
+  a11y:
+    recommended:  "not color alone — label 'Most Popular'"
+    cta:          "'Choose Pro Plan' not 'Get started' × 3"
+
+checkout:
+  principles:     [cognitive_load, error_prevention, error_recovery, visual_hierarchy, law_least_effort]
+  steps:          [cart_review, delivery, payment, confirmation]
+  progress:       visible_step_indicator
+  guest_checkout: required  # before_account_creation
+  order_summary:  persistent_throughout
+  a11y:           [wcag_3.3.1, wcag_3.3.2, wcag_3.3.3, wcag_3.3.4, wcag_3.3.7]
+
+article_content:
+  principles:     [visual_scanning, visual_hierarchy, cognitive_load, chunking]
+  structure:
+    heading:      single_h1_page_title
+    subheadings:  descriptive_h2_h3
+    body:         60_80_char_measure
+    line_height:  1.6_minimum
+  motion:         minimal — scroll_fade_optional
+  a11y:           [heading_hierarchy, lang_attribute, reading_order]
+
+dashboard:
+  principles:     [visual_hierarchy, cognitive_load, selective_attention, change_blindness, chunking]
+  structure:
+    primary_kpi:  1 dominant metric
+    secondary:    2-4 supporting
+    sections:     named_and_chunked
+    status:       always_visible
+  live_data:
+    update:       animate_change  # change_blindness remedy
+    aria:         aria_live_polite
+  a11y:           [1.1.1_alt_for_charts, 1.4.1_non_color_status, 4.1.3_live_regions]
+
+form_page:
+  principles:     [cognitive_load, chunking, recognition_recall, error_prevention, error_recovery, proximity]
+  structure:
+    sections:     fieldset_legend_groups
+    labels:       always_visible_above_input
+    required:     asterisk_plus_legend
+    validation:   on_blur
+    submit:       single_primary_button_end_of_form
+  a11y:           [3.3.1, 3.3.2, 3.3.3, 3.3.4, 3.3.7, 1.4.1, 2.1.1]

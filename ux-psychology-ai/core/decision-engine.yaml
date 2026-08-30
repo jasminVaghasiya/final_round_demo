@@ -1,0 +1,170 @@
+﻿# DECISION ENGINE — AI Task Classification + Principle Selection
+# This is the routing layer. Load this + core/principles.yaml for every request.
+# Load knowledge/ files only for the matched domains.
+
+version: "1.1"
+
+# ── STEP 1: CLASSIFY THE TASK ─────────────────────────────────────────────────
+task_classifier:
+
+  # Map task type to domains that must be loaded
+  form:
+    domains: [cognition, interaction, accessibility]
+    principles: [cognitive_load, chunking, recognition_recall, error_prevention, error_recovery, constraints, feedback_timing, interaction_states, progressive_disclosure]
+    patterns: [forms]
+    wcag: [3.3.1, 3.3.2, 3.3.3, 3.3.4, 3.3.7, 1.4.1, 1.4.3, 2.1.1, 2.4.7]
+
+  navigation:
+    domains: [attention, decision, interaction, accessibility]
+    principles: [information_scent, serial_position, chunking, visual_hierarchy, interaction_states, mental_models]
+    patterns: [navigation]
+    wcag: [2.4.1, 2.4.3, 2.4.6, 2.4.7, 3.2.3, 3.2.4, 2.1.1, 4.1.2]
+
+  dashboard:
+    domains: [attention, cognition, visual_design, accessibility]
+    principles: [visual_hierarchy, cognitive_load, chunking, selective_attention, change_blindness, visual_salience, contrast_salience]
+    patterns: [dashboards]
+    wcag: [1.4.1, 1.4.3, 1.4.11, 4.1.3, 1.1.1]
+
+  landing_page:
+    domains: [decision, attention, visual_design]
+    principles: [visual_hierarchy, visual_scanning, serial_position, von_restorff, loss_aversion, framing, anchoring, peak_end]
+    patterns: [websites]
+
+  onboarding:
+    domains: [decision, cognition, motion, accessibility]
+    principles: [goal_gradient, endowed_progress, peak_end, progressive_disclosure, cognitive_load, chunking, mental_models]
+    patterns: [onboarding]
+    wcag: [3.3.2, 3.3.7, 2.1.1, 4.1.3]
+
+  ecommerce:
+    domains: [decision, attention, interaction, accessibility]
+    principles: [visual_hierarchy, von_restorff, loss_aversion, anchoring, default_effect, choice_overload, information_scent, fitts, error_prevention]
+    patterns: [ecommerce]
+    wcag: [1.1.1, 1.4.1, 2.1.1, 3.3.1, 3.3.3, 4.1.2]
+
+  modal_dialog:
+    domains: [interaction, attention, accessibility]
+    principles: [figure_ground, selective_attention, fitts, interaction_states, feedback_timing]
+    wcag: [2.1.1, 2.1.2, 2.4.3, 4.1.2, 1.4.3]
+
+  component:
+    domains: [interaction, visual_design, motion, accessibility]
+    principles: [affordances, interaction_states, feedback_timing, fitts, visual_hierarchy, contrast_salience]
+    wcag: [1.4.1, 1.4.3, 1.4.11, 2.1.1, 2.4.7, 2.5.8, 4.1.2]
+
+  data_visualization:
+    domains: [perception, cognition, accessibility]
+    principles: [visual_hierarchy, contrast_salience, similarity, proximity, connectedness, chunking, change_blindness]
+    wcag: [1.1.1, 1.4.1, 1.4.3, 4.1.3]
+
+  mobile:
+    domains: [interaction, visual_design, accessibility]
+    principles: [fitts, visual_hierarchy, chunking, progressive_disclosure, information_scent, interaction_states]
+    patterns: [mobile]
+    wcag: [1.3.4, 2.5.1, 2.5.8, 1.4.3, 2.1.1, 4.1.2]
+
+  motion_design:
+    domains: [motion, attention, accessibility]
+    principles: [common_fate, change_blindness, visual_salience, interaction_states]
+    patterns: [animations]
+    wcag: [2.3.1, 2.3.3]
+
+  audit:
+    domains: [ux, ui, interaction, accessibility, motion]
+    principles: [all]
+    load: [knowledge/all, ai/audit.md]
+
+# ── STEP 2: USER CONTEXT MODIFIERS ────────────────────────────────────────────
+context_modifiers:
+
+  user_expertise:
+    novice:
+      amplify: [recognition_recall, progressive_disclosure, mental_models, information_scent, error_prevention]
+      suppress: [flexibility_and_efficiency]
+    expert:
+      amplify: [flexibility_and_efficiency, chunking]
+      suppress: [progressive_disclosure]
+    mixed:
+      amplify: [flexibility_and_efficiency, progressive_disclosure]
+
+  risk_level:
+    high_stakes:   # financial, medical, legal, irreversible
+      require: [error_prevention, error_recovery, loss_aversion, constraints, nielsen_10.H3, nielsen_10.H5]
+    low_stakes:
+      relax: [confirmation_dialogs]
+
+  device:
+    touch_mobile:
+      require: [fitts, interaction_states]
+      minimums: {touch_target: "44x44px", spacing: "8px"}
+    pointer_desktop:
+      minimums: {target: "24x24px"}
+    both:
+      require: [fitts, responsive_design]
+
+  context_of_use:
+    distracted:
+      amplify: [visual_hierarchy, selective_attention, change_blindness, feedback_timing]
+      simplify: [cognitive_load]
+    high_focus:
+      standard: true
+    time_pressured:
+      amplify: [law_least_effort, fitts, recognition_recall, hick_hyman]
+
+  user_group_flags:
+    cognitive_accessibility:
+      load: [layers/07-accessibility/cognitive-accessibility.md]
+      amplify: [chunking, recognition_recall, error_prevention, progressive_disclosure]
+    motor_impairment:
+      amplify: [fitts, interaction_states]
+      minimums: {touch_target: "44x44px"}
+    low_vision:
+      wcag_level: AA
+      contrast_minimum: {text: "4.5:1", large_text: "3:1", ui: "3:1"}
+
+# ── STEP 3: PRINCIPLE SELECTION RULES ─────────────────────────────────────────
+selection_rules:
+
+  # Principles to ALWAYS include
+  universal:
+    - visual_hierarchy     # every screen
+    - interaction_states   # every interactive element
+    - feedback_timing      # every action
+    - selective_attention  # every screen
+
+  # Principles to NEVER apply blindly
+  contextual_only:
+    - goal_gradient:      only_when: [multi_step_task, progress_visible]
+    - endowed_progress:   only_when: [task_completion_tracked]
+    - loss_aversion:      only_when: [reversible_decision_or_abandonment_risk]
+    - choice_overload:    only_when: [10_or_more_comparable_undifferentiated_options]
+    - anchoring:          only_when: [numerical_judgment_or_pricing_context]
+    - framing:            only_when: [persuasion_or_risk_communication_context]
+
+  # Ethical constraints — these override all other rules
+  ethical_overrides:
+    - do_not: use_defaults_that_benefit_product_at_user_expense
+    - do_not: create_artificial_urgency_or_false_scarcity
+    - do_not: exploit_loss_aversion_for_manipulation
+    - do_not: pre_check_options_that_share_user_data_without_explicit_consent
+    - do_not: apply_choice_overload_reduction_to_remove_features_users_need
+
+# ── STEP 4: OUTPUT REQUIREMENTS ───────────────────────────────────────────────
+output_checklist:
+  every_output_must_include:
+    - information_hierarchy: defined
+    - interaction_states: all_applicable_defined
+    - accessibility: wcag_criteria_applied
+    - motion: purposeful_or_absent
+    - error_states: defined
+    - reduced_motion: alternative_defined_if_motion_used
+
+  output_format_sequence:
+    1: reasoning         # which principles apply and why
+    2: structure         # IA, grouping, hierarchy
+    3: interaction_spec  # states, keyboard, ARIA
+    4: visual_spec       # hierarchy, color, type, spacing
+    5: motion_spec       # if applicable
+    6: implementation    # semantic HTML + CSS + ARIA
+    7: audit_result      # violations found and fixed

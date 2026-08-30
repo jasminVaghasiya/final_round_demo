@@ -1,0 +1,59 @@
+﻿# EVIDENCE CLASSIFICATION SYSTEM
+# Applied to every principle in this repository.
+# AI must respect these levels — do not treat D/E as rules.
+
+levels:
+  A:
+    label: Empirical law or extensively replicated effect
+    trust: high
+    usage: apply as reliable constraint
+    examples: [fitts, hick_hyman, proximity, cognitive_load, working_memory, loss_aversion]
+
+  B:
+    label: Empirical effect with good support but context-dependent
+    trust: medium
+    usage: apply with understanding of conditions
+    conditions_must_be_met: true
+    examples: [choice_overload, goal_gradient, endowed_progress, common_region, aesthetic_usability, peak_end]
+
+  C:
+    label: Expert-derived heuristic or design principle
+    trust: medium-low
+    usage: apply as structured heuristic not as law
+    note: not_experimentally_derived
+    examples: [nielsen_10, visual_scanning, interaction_states, error_prevention, error_recovery]
+
+  D:
+    label: Popular UX principle or folk heuristic
+    trust: low
+    usage: useful framing but not reliable prediction
+    note: do_not_cite_as_law
+    examples: [jakobs_law, teslers_law, doherty_threshold]
+
+  E:
+    label: Unverified or anecdotal
+    trust: very_low
+    usage: exclude from design reasoning unless no better source exists
+    examples: [rule_of_thirds_for_ui, golden_ratio_for_ux]
+
+correction_notes:
+  miller_1956:
+    common_claim: "users can hold 7±2 items"
+    accurate_claim: "information transmission channel capacity ~7 bits — not a UI item count"
+    correct_reference: cowan_2001
+    correct_capacity: "3-4 chunks in working memory"
+
+  hick_law:
+    common_claim: "keep menus under 7 items"
+    accurate_claim: "choice reaction time increases logarithmically with equally probable, equally familiar alternatives"
+    correct_implication: "organize and prioritize choices; familiarity reduces the effect"
+
+  fitts_law:
+    common_claim: "make buttons bigger"
+    accurate_claim: "MT = a + b × log2(1 + D/W) — distance and width both matter"
+    correct_implication: "prioritize proximity for frequent controls AND adequate size"
+
+  doherty_threshold:
+    common_claim: "responses under 400ms double productivity"
+    accurate_claim: "IBM 1982 white paper finding in a specific context; not a universal law"
+    better_reference: miller_1968_response_time_thresholds

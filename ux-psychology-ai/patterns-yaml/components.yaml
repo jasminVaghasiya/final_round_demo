@@ -1,0 +1,131 @@
+﻿# COMPONENT PATTERNS — Compact AI Runtime
+# Full reference: /patterns/ and /ui/components/
+
+# Every component entry specifies:
+# - states required
+# - accessibility requirements
+# - motion spec
+# - key anti-patterns
+
+button:
+  variants: [primary, secondary, destructive, ghost, icon_only]
+  states:   [default, hover, focus, active, loading, disabled, success]
+  a11y:
+    element: "<button>"
+    name:    visible_text_or_aria_label
+    role:    implicit_button
+    loading: "aria-busy='true', disable during load"
+    icon_only: "aria-label required"
+  motion:
+    press:   "scale 97% 80ms"
+    release: "scale 100% 120ms ease-out"
+    loading: "spinner replaces content"
+  sizing:
+    min_touch: 44x44px
+    min_pointer: 32px_height
+  anti_patterns:
+    - multiple_equally_primary_buttons_per_view
+    - generic_labels: ["Submit", "Click here", "OK"]
+    - loading_without_disabling
+
+input:
+  types:   [text, email, password, number, textarea, search]
+  states:  [default, focus, filled, error, disabled]
+  a11y:
+    label:      "always visible, never placeholder-only"
+    association: "<label for='id'> or aria-labelledby"
+    required:   "required + aria-required + asterisk + note"
+    error:      "aria-invalid='true' + aria-describedby"
+    help:       "aria-describedby on secondary description"
+  validation: on_blur_not_keystroke
+  anti_patterns:
+    - placeholder_as_label  # disappears on input
+    - validate_on_every_keystroke
+    - error_message_far_from_field
+
+select_dropdown:
+  prefer_native: "<select> for simple single choice"
+  custom_when: [multi_select, search_filtering, custom_rendering]
+  a11y:
+    native:  "native <select> is accessible by default"
+    custom:  "role=combobox or listbox + full ARIA pattern from WAI-ARIA APG"
+  anti_patterns:
+    - navigation_on_change_without_submit_button  # violates WCAG 3.2.2
+
+checkbox:
+  a11y:
+    element: "<input type='checkbox'>"
+    group:   "<fieldset><legend>"
+    mixed:   "aria-checked='mixed'"
+  motion:
+    check:   "checkmark draw or fill 100ms"
+
+modal_dialog:
+  a11y:
+    role:     "dialog"
+    required: [aria-modal, aria-labelledby]
+    focus:    "moves to first element on open"
+    trap:     "tab cycles within dialog"
+    close:    "Escape key + close button + focus returns to trigger"
+  motion:
+    open:     "scale 0.95→1 + opacity 0→1 250ms ease-out"
+    close:    "scale 1→0.95 + opacity 1→0 200ms ease-in"
+  anti_patterns:
+    - no_close_button
+    - escape_key_not_handled
+    - focus_not_trapped
+    - focus_not_returned_on_close
+
+toast_notification:
+  use_for:      low_stakes_confirmations  # NOT errors
+  placement:    [bottom_center, top_right]
+  duration:     "4-6s auto dismiss"
+  a11y:
+    role:       "status"  # or role='alert' for urgent
+    live:       "aria-live='polite'"
+    persistent: "for errors or important: do not auto-dismiss"
+  motion:
+    enter:      "opacity + translateY 200ms ease-out"
+    exit:       "opacity 150ms ease-in"
+  anti_patterns:
+    - using_toast_for_errors  # errors need persistent inline feedback
+    - auto_dismissing_errors
+
+tabs:
+  a11y:
+    container:  "role='tablist'"
+    tab:        "role='tab' + aria-selected + aria-controls"
+    panel:      "role='tabpanel' + aria-labelledby"
+    keyboard:   "arrows navigate tabs; Enter/Space activates"
+  motion:
+    switch:     "panel fade or slide to tab direction 150ms"
+    indicator:  "translate to active tab 200ms ease-in-out"
+
+accordion:
+  a11y:
+    trigger:    "<button> with aria-expanded + aria-controls"
+    panel:      "role='region' with aria-labelledby"
+    keyboard:   "Enter/Space toggles; Tab navigates between triggers"
+  motion:
+    expand:     "height + opacity 200ms ease-out"
+    collapse:   "height + opacity 150ms ease-in"
+
+empty_state:
+  required_content:
+    - why:    reason_for_empty_state
+    - action: path_to_add_content_or_resolve
+  variants:
+    no_data:      "Nothing here yet. [Primary action]"
+    filter_empty: "No results match your filters. [Clear filters]"
+    error:        "Could not load content. [Retry]"
+  a11y:
+    heading:  descriptive_not_generic
+    action:   accessible_button_or_link
+
+skeleton_loading:
+  use:    before_content_loads_not_after_data_arrives
+  a11y:
+    container: "aria-busy='true' aria-label='Loading...'"
+    complete:  "remove aria-busy, announce with role='status'"
+  motion:
+    shimmer: "1.5s gradient animation — reduced_motion: static gray"

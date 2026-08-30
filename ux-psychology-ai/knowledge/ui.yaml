@@ -1,0 +1,100 @@
+﻿# UI KNOWLEDGE — Compact AI Runtime
+# Full reference: /ui/
+
+visual_hierarchy:
+  levels: [primary, secondary, tertiary, metadata]
+  rule: one_primary_element_per_view
+  tools: [size, weight, color, contrast, space, position]
+  max_distinct_levels: 4
+  anti_pattern: equal_visual_weight_across_all_elements
+
+typography:
+  scale_ratio: 1.25  # Major Third
+  tokens:
+    xs:   "0.75rem"
+    sm:   "0.875rem"
+    base: "1rem"
+    md:   "1.125rem"
+    lg:   "1.25rem"
+    xl:   "1.5rem"
+    2xl:  "1.875rem"
+    3xl:  "2.25rem"
+    4xl:  "3rem"
+  weights: {regular: 400, medium: 500, semibold: 600, bold: 700}
+  body_min: "1rem (16px)"
+  line_height_body_min: 1.5
+  line_height_heading: 1.2
+  measure: "60-80 chars"
+  max_families: 2
+  max_weights_per_view: 3
+
+color_system:
+  roles: [primary, secondary, surface, surface_raised, text_primary, text_secondary, text_disabled, border, error, warning, success, info]
+  rule: one_primary_action_color_per_interface
+  anti_patterns:
+    - color_as_only_error_indicator
+    - multiple_competing_primary_action_colors
+    - saturated_colors_in_dark_mode
+  contrast:
+    text_body: "4.5:1 min"
+    text_large: "3:1 min"
+    ui_components: "3:1 min"
+    focus_ring: "3:1 min"
+  dark_mode:
+    surface_base: "#121212"
+    elevation: by_lightness_not_shadow
+    text_primary: "rgba(255,255,255,0.87)"
+    reduce_saturation: true
+    ref: ui/color/dark-mode.md
+
+spacing:
+  base_unit: 8
+  scale:
+    "1": "4px"
+    "2": "8px"
+    "3": "12px"
+    "4": "16px"
+    "5": "24px"
+    "6": "32px"
+    "7": "48px"
+    "8": "64px"
+  within_group: space_2_to_3
+  between_groups: space_5_to_6
+  between_sections: space_7_to_8
+  ratio_rule: between_group_spacing_must_exceed_within_group_spacing
+
+layout:
+  grid: 12col_desktop_4to6_mobile
+  gutter: "16-32px desktop; 16px mobile"
+  body_max_width: "600-800px"
+  alignment: single_grid_not_ad_hoc
+  reading_direction: ltr_default_top_left_most_important
+
+interaction_states:
+  required_for_all_interactive_elements:
+    default:  base appearance
+    hover:    subtle highlight + cursor pointer
+    focus:    "visible ring — NEVER suppress"
+    active:   compressed or brightened on press
+    disabled: reduced contrast + no hover
+  conditional:
+    loading:  spinner_or_skeleton within 300ms
+    success:  color + icon + confirmation text
+    error:    color + icon + error text
+    selected: filled or highlighted
+    empty:    reason + action_path
+  focus_ring:
+    wcag: "2.4.7 (AA) and 2.4.11 (WCAG 2.2 AA)"
+    min_area: "perimeter × 2px"
+    min_contrast: "3:1"
+    css: "outline: 2px solid var(--color-border-focus); outline-offset: 2px"
+
+responsive:
+  breakpoints:
+    sm:  "360-767px"
+    md:  "768-1023px"
+    lg:  "1024-1439px"
+    xl:  "1440px+"
+  approach: mobile_first
+  test_at: [360px, 768px, 1024px, 1440px, "200% zoom", "400% zoom"]
+  wcag: ["1.4.4 text resize 200%", "1.4.10 reflow 400%", "1.3.4 no orientation lock"]

@@ -1,0 +1,78 @@
+﻿# INTERACTION KNOWLEDGE — Compact AI Runtime
+# Full reference: /layers/05-interaction-usability/
+
+# Every interactive element must answer:
+# 1. What can I do? (affordance)
+# 2. How do I do it? (signifier)
+# 3. What happened? (feedback)
+# 4. What if something goes wrong? (error recovery)
+
+affordances:
+  rule: interactive_elements_must_signal_interactivity_and_method
+  signifiers:
+    button:  [background, border, or elevated surface + cursor:pointer]
+    link:    [color + underline]
+    input:   [border or underline + placeholder or label]
+    select:  [border + chevron icon]
+    toggle:  [visible thumb + track]
+  anti_patterns:
+    - flat_ghost_button_indistinguishable_from_text
+    - non_interactive_element_with_hover_shadow
+    - icon_only_control_without_label_or_tooltip
+
+fitts_application:
+  primary_action:    largest_and_nearest_to_current_focus
+  destructive:       smaller_or_more_distant_than_primary
+  adjacent_targets:  min_8px_spacing_between
+  screen_edge:       infinite_width_on_desktop_use_for_frequent_actions
+  touch_min:         24x24px  # WCAG 2.5.8
+  touch_recommended: 44x44px  # Apple HIG / Material
+
+keyboard_patterns:
+  navigation:
+    tab:        moves_between_interactive_elements
+    shift_tab:  moves_backward
+    enter:      activates_button_or_follows_link
+    space:      activates_button_or_checkbox
+    escape:     closes_modal_dialog_dropdown_tooltip
+  menu:
+    arrows:     navigate_items
+    enter:      select_item
+    escape:     close_and_return_to_trigger
+  modal:
+    open:       focus_moves_to_first_element_in_dialog
+    trap:       tab_cycles_within_dialog_only
+    close:      focus_returns_to_trigger
+    escape:     closes
+
+validation:
+  timing:       on_blur  # NOT on every keystroke; NOT only on submit
+  show_requirements: before_error_not_after
+  disable_submit: when_required_fields_empty  # but explain why
+  preserve_input: always_on_error
+
+error_messages:
+  format:       "[field] [problem]. [corrective action]."
+  example:      "Email address is invalid. Enter an address like name@example.com."
+  placement:    adjacent_below_the_field
+  color:        red_family + icon + border  # never color alone
+  aria:         "aria-invalid='true' + aria-describedby pointing to message"
+  announce:     "role='alert' or aria-live='assertive'"
+
+confirmation_patterns:
+  when_required:
+    - destructive_irreversible_actions
+    - financial_commitments
+    - bulk_operations
+    - session_ending_with_unsaved_work
+  format:
+    title:    describes_the_consequence
+    body:     explains_what_will_happen
+    primary:  destructive_action_labeled_clearly
+    cancel:   always_present
+  anti_pattern: "Are you sure? [Yes] [No]"
+
+undo:
+  prefer_undo_over_confirmation: for_reversible_actions
+  implementation: [snackbar_with_undo, version_history, trash_with_restore]
+  timeout: "5-10s minimum for undo toast"

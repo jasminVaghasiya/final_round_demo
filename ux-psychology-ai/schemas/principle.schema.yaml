@@ -1,0 +1,153 @@
+﻿# principle.schema.yaml
+# Canonical schema for all principle files in ux-psychology-ai.
+# Fields marked REQUIRED must be present.
+# Fields marked OPTIONAL may be omitted if not applicable.
+# Never fabricate values — leave fields empty or note "unverified" rather than inventing content.
+
+# ─── Identity ────────────────────────────────────────────────────────────────
+
+id: ""
+# REQUIRED. Unique identifier. Format: L{layer}-P{number}
+# Example: L01-P01
+
+name: ""
+# REQUIRED. The name of the principle as used in research or practice.
+
+aliases: []
+# OPTIONAL. Alternative names.
+# Example: ["Hick's Law", "Hick–Hyman Law"]
+
+layer: ""
+# REQUIRED. Primary layer. Example: "01-human-perception"
+
+version: "1.0"
+# REQUIRED. Document version.
+
+# ─── Classification ────────────────────────────────────────────────────────
+
+evidence_level: ""
+# REQUIRED. One of: A / B / C / D / E
+#
+# A = Strong empirical/experimental support (replicated studies, meta-analyses)
+# B = Supported by established research or theory
+# C = Established design heuristic from expert practice
+# D = Popular UX interpretation or simplified model
+# E = Context-dependent, limited, or contested evidence
+
+type: ""
+# REQUIRED. One of:
+#   empirical_law           quantitative, predictive, experimentally derived
+#   empirical_effect        demonstrated phenomenon with defined conditions
+#   cognitive_theory        theoretical framework with empirical grounding
+#   design_heuristic        expert-derived usability principle
+#   design_principle        widely used design guidance
+#   perceptual_principle    describes human perceptual behavior
+#   popular_interpretation  UX shorthand that simplifies research
+
+domain: ""
+# REQUIRED. Primary cognitive/design domain.
+# Example: "visual perception", "working memory", "motor behavior"
+
+# ─── Scientific Provenance ─────────────────────────────────────────────────
+
+origin:
+  authors: []
+  # OPTIONAL. Never fabricate.
+
+  year: null
+  # OPTIONAL. Year of original publication.
+
+  publication: ""
+  # OPTIONAL. Title of original paper, book, or standard.
+
+  venue: ""
+  # OPTIONAL. Journal, conference, or publisher.
+
+  doi: ""
+  # OPTIONAL. DOI if available. Do not guess or fabricate.
+
+  notes: ""
+  # OPTIONAL. Caveats about the original research context.
+
+# ─── Core Content ──────────────────────────────────────────────────────────
+
+definition: ""
+# REQUIRED. One clear sentence defining the principle.
+
+mechanism: ""
+# OPTIONAL. The underlying psychological or physical mechanism.
+
+research_basis: ""
+# REQUIRED. Brief description of the empirical or theoretical basis.
+# If evidence is limited or contested, state that explicitly.
+
+why_it_matters: ""
+# REQUIRED. Why this principle is relevant to interface design.
+
+# ─── Application ────────────────────────────────────────────────────────────
+
+when_to_apply:
+  - ""
+# REQUIRED. Minimum 2 conditions when this principle is relevant.
+
+ui_implications:
+  - ""
+# REQUIRED. Minimum 3 concrete, actionable interface design rules.
+# Specific enough to evaluate in a design review.
+
+implementation_rules:
+  - ""
+# OPTIONAL. More specific technical or structural guidance.
+
+examples:
+  - context: ""
+    application: ""
+# OPTIONAL. Concrete examples of the principle applied well.
+
+anti_patterns:
+  - ""
+# REQUIRED. Minimum 2 common misapplications or violations.
+
+# ─── Boundaries ────────────────────────────────────────────────────────────
+
+exceptions: ""
+# REQUIRED. Conditions where this principle does not apply or applies differently.
+
+limitations: ""
+# REQUIRED. Known limitations of the research or design claim.
+
+competing_principles: []
+# OPTIONAL. Principles this can conflict with.
+# Example: ["L02-P04 Progressive Disclosure", "L04-P04 Information Scent"]
+
+# ─── Accessibility ──────────────────────────────────────────────────────────
+
+accessibility_considerations: ""
+# REQUIRED. How this principle interacts with accessibility.
+# Reference specific WCAG success criteria where applicable.
+
+# ─── Cross-References ───────────────────────────────────────────────────────
+
+related_principles: []
+# OPTIONAL. IDs or names of related principles.
+# Example: ["L01-P02 Similarity", "L02-P01 Cognitive Load"]
+
+# ─── Sources ───────────────────────────────────────────────────────────────
+
+sources:
+  primary:
+    - ""
+  # REQUIRED. At least one entry, or explicitly state "No primary source identified."
+  # Format: "Author (Year). Title. Venue. DOI."
+  # Never fabricate.
+
+  secondary:
+    - ""
+  # OPTIONAL. Books, review articles, or reputable secondary sources.
+
+  standards:
+    - ""
+  # OPTIONAL. Standards with version and criterion.
+
+last_verified: ""
+# OPTIONAL. ISO 8601 date when sources were last checked. Example: "2024-01-15"

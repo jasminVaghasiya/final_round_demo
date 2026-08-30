@@ -1,0 +1,92 @@
+﻿# DEVELOPMENT KNOWLEDGE — Compact AI Runtime
+# Semantic HTML + CSS + ARIA implementation patterns
+
+html:
+  prefer_native:
+    button:   "<button> not <div role='button'>"
+    link:     "<a href> not <span> with onclick"
+    input:    "<input type=...> with <label>"
+    select:   "<select> for simple; custom for enhanced"
+    heading:  "<h1>-<h6> for structure not style"
+    list:     "<ul>/<ol> for navigation and options"
+
+  landmarks:
+    required: [main, nav]
+    recommended: [header, footer, aside, section_with_aria_label]
+    skip_link: "first element, visible on focus, href='#main-content'"
+
+  form_patterns:
+    label:          "<label for='id'>Label</label><input id='id'>"
+    help_text:      "<input aria-describedby='help-id'><span id='help-id'>...</span>"
+    error:          "<input aria-invalid='true' aria-describedby='err-id'><span id='err-id' role='alert'>...</span>"
+    required:       "<input required aria-required='true'> + visual asterisk + note"
+    group:          "<fieldset><legend>Group name</legend>...</fieldset>"
+
+css:
+  units:
+    font_size:    rem  # respects user browser preferences
+    spacing:      rem or px  # px acceptable for spacing
+    media_query:  em  # for zoom-relative breakpoints
+    border:       px
+
+  state_selectors:
+    hover:    "&:hover"
+    focus:    "&:focus-visible"  # not :focus — avoids mouse click ring
+    active:   "&:active"
+    disabled: "&:disabled, &[aria-disabled='true']"
+    invalid:  "&[aria-invalid='true']"
+
+  focus_ring_template: |
+    :focus-visible {
+      outline: 2px solid var(--color-focus);
+      outline-offset: 2px;
+    }
+
+  reduced_motion_template: |
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+  dark_mode_template: |
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-surface: #121212;
+        --color-text-primary: rgba(255,255,255,0.87);
+        /* ... all tokens redefined */
+      }
+    }
+
+aria:
+  states_always_required_on_custom_components:
+    expanded:   "aria-expanded on trigger"
+    selected:   "aria-selected on option/tab"
+    checked:    "aria-checked on custom checkbox/radio"
+    pressed:    "aria-pressed on toggle button"
+    disabled:   "aria-disabled on non-native disabled elements"
+    invalid:    "aria-invalid='true' on errored inputs"
+    busy:       "aria-busy='true' on loading containers"
+
+  live_regions:
+    error:      "role='alert'"              # assertive, immediate
+    success:    "role='status'"             # polite
+    loading:    "aria-busy='true'"          # on the loading container
+    count_update: "aria-live='polite' aria-atomic='true'"
+
+performance:
+  images:
+    format:   [webp, avif]  # with jpg/png fallback
+    lazy:     "loading='lazy' for below-fold"
+    alt:      always_required
+
+  fonts:
+    preload:  critical_fonts
+    swap:     "font-display: swap"
+    subset:   latin_only_if_not_multilingual
+
+  interaction:
+    debounce:     "search inputs 300ms"
+    throttle:     "scroll handlers 16ms"
+    defer:        "non-critical JS"
